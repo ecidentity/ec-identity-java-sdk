@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option java_package = "io.ecidentity.protocol.types";
+option java_multiple_files = true;
+
+enum KeyEntryTypeProtocol {
+  EMAIL = 0;
+  PERSONAL = 1;
+  ADDRESS = 2;
+  BUSINESS = 3;
+}
+
+enum ResultCodeExtProtocol {
+  OK = 0;
+  PENDING = 1;
+  REFUSED = 2;
+  TIMEOUT = 3;
+  UNUSABLE = 4;
+  WRONG_VC = 5;
+  REVOKED = 6;
+  INVALID_SIGNATURE = 7;
+  NOT_REGISTERED = 8;
+  NO_CERTIFICATE = 9;
+  SECURITY_EXCEPTION = 10;
+  BLOCKED = 11;
+  NOT_FOUND = 12;
+}
