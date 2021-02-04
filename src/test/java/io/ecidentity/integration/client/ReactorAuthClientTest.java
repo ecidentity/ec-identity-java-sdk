@@ -59,7 +59,7 @@ public class ReactorAuthClientTest extends TestBase {
         byte[] randomHash = hash(new byte[0]);
 
         AuthStatusResponsePayload responsePayload = client.init(
-                "basiljev@gmail.com",
+                "mail@mail.com",
                 KeyEntryTypeProtocol.EMAIL,
                 randomHash,
                 false,
