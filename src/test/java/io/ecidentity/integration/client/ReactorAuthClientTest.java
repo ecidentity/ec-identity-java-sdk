@@ -37,7 +37,7 @@ public class ReactorAuthClientTest extends TestBase {
         byte[] randomHash = hash(new byte[0]);
 
         AuthStatusResponsePayload responsePayload = client.auth(
-                "mail@mail.com",
+                "mail@mail.com", // Email address registered on demo.ecidentity.io
                 KeyEntryTypeProtocol.EMAIL,
                 randomHash,
                 false,
@@ -59,7 +59,7 @@ public class ReactorAuthClientTest extends TestBase {
         byte[] randomHash = hash(new byte[0]);
 
         AuthStatusResponsePayload responsePayload = client.init(
-                "mail@mail.com",
+                "mail@mail.com", // Email address registered on demo.ecidentity.io
                 KeyEntryTypeProtocol.EMAIL,
                 randomHash,
                 false,

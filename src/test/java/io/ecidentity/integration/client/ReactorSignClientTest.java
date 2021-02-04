@@ -34,7 +34,7 @@ public class ReactorSignClientTest extends TestBase {
     public void test() {
 
         SignHashResponsePayload signHashResponsePayload = client.init(
-                "mail@mail.com",
+                "mail@mail.com", // Email address registered on demo.ecidentity.io
                 KeyEntryTypeProtocol.EMAIL)
                 .doOnNext(payload -> logger.info(payload.toString()))
                 .last()

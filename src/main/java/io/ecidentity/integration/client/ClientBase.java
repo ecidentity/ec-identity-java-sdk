@@ -2,6 +2,8 @@ package io.ecidentity.integration.client;
 
 import com.google.protobuf.AbstractMessage;
 import com.google.protobuf.ByteString;
+import io.ecidentity.integration.exception.ResponseException;
+import io.ecidentity.integration.exception.SignatureVerificationException;
 import io.ecidentity.integration.utils.Config;
 import io.ecidentity.protocol.authority.CertificateRequest;
 import io.ecidentity.protocol.authority.CertificateResponse;
@@ -46,39 +48,26 @@ public class ClientBase {
         return signHash(sha256(message.toByteArray()));
     }
 
-    protected AbstractMessage handlePayload(AbstractMessage response) throws Exception {
+    protected AbstractMessage handleResponse(AbstractMessage response) throws Exception {
         if (new Date().after(certificate.getNotAfter())) {
             retrieveCertificate();
         }
         AbstractMessage payload = getPayload(response);
+        ResultCodeExtProtocol resultCode = getResultCode(payload);
         verifyMessage(getSignature(response), payload);
-        return response;
-    }
-
-    protected AbstractMessage handleResponse(AbstractMessage response) {
-        try {
-            if (new Date().after(certificate.getNotAfter())) {
-                retrieveCertificate();
-            }
-            AbstractMessage payload = getPayload(response);
-            ResultCodeExtProtocol resultCode = getResultCode(payload);
-            verifyMessage(getSignature(response), payload);
-            switch (resultCode) {
-                case OK:
-                case PENDING:
-                    return payload;
-                default:
-                    throw new RuntimeException("Result: " + resultCode.name());
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        switch (resultCode) {
+            case OK:
+            case PENDING:
+                return payload;
+            default:
+                throw new ResponseException("Result: " + resultCode.name(), resultCode);
         }
     }
 
     private void verifyMessage(ByteString signature, AbstractMessage message) throws Exception {
         if (new Date().after(certificate.getNotAfter())) retrieveCertificate();
         if (!verify(sha256(message.toByteArray()), certificate.getPublicKey(), signature.toByteArray()))
-            throw new Exception("Invalid signature");
+            throw new SignatureVerificationException("Invalid signature");
     }
 
     private byte[] signHash(byte[] hash) throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, SignatureException, InvalidKeyException {
