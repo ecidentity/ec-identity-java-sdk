@@ -15,5 +15,5 @@ Building from the source is necessary since artifacts are not published yet.
 From the top level directory:
 
 ```bash
-mvn clean install -DskipTests
+mvn clean install -Dmaven.test.skip=true
 ```
