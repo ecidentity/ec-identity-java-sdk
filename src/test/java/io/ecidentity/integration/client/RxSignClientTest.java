@@ -34,7 +34,7 @@ public class RxSignClientTest extends TestBase {
     public void test() {
 
         SignHashResponsePayload signHashResponsePayload = client.init(
-                "mail@mail.com", // Email address registered on demo.ecidentity.io
+                "mail@mail.com",
                 KeyEntryTypeProtocol.EMAIL)
                 .doOnNext(payload -> logger.info(payload.toString()))
                 .lastElement()

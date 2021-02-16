@@ -28,6 +28,7 @@ import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.AbstractMap;
 import java.util.Arrays;
@@ -59,7 +60,7 @@ public class CryptoUtils {
         seq.close();
         return bos.toByteArray();
     }
-    
+
     public static PrivateKey getPrivateKeyFromPem(String pem) throws IOException {
         JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
         PEMParser pemParser = new PEMParser(new StringReader(pem));
@@ -84,15 +85,20 @@ public class CryptoUtils {
             ASN1Encodable encodable = x500Name.getRDNs(x)[0].getFirst().getValue();
             String value;
 
-            if (encodable instanceof ASN1GeneralizedTime){
-                value = new SimpleDateFormat(DATE_FORMAT).format(encodable);
-            }else if(encodable instanceof DERPrintableString){
+            if (encodable instanceof ASN1GeneralizedTime) {
+                try {
+                    value = new SimpleDateFormat(DATE_FORMAT).format(((ASN1GeneralizedTime) encodable).getDate());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    value = "";
+                }
+            } else if (encodable instanceof DERPrintableString) {
                 value = ((DERPrintableString) encodable).getString();
-            }else if(encodable instanceof DERIA5String){
+            } else if (encodable instanceof DERIA5String) {
                 value = ((DERIA5String) encodable).getString();
-            }else if(encodable instanceof DERUTF8String){
+            } else if (encodable instanceof DERUTF8String) {
                 value = ((DERUTF8String) encodable).getString();
-            }else{
+            } else {
                 value = encodable.toString();
             }
             return new AbstractMap.SimpleEntry<>(key, value);
@@ -130,7 +136,7 @@ public class CryptoUtils {
         return signer.verify(signature);
     }
 
-    public static byte[] sha256(byte[] data){
+    public static byte[] sha256(byte[] data) {
         try {
             return MessageDigest.getInstance("SHA-256").digest(data);
         } catch (NoSuchAlgorithmException e) {

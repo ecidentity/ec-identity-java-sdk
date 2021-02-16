@@ -5,7 +5,6 @@ import io.ecidentity.integration.utils.Config;
 import io.ecidentity.protocol.authority.*;
 import io.ecidentity.protocol.types.KeyEntryTypeProtocol;
 import io.ecidentity.protocol.types.ResultCodeExtProtocol;
-import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -77,13 +76,7 @@ public class ReactorAuthClient extends ClientBase {
                 .setSignature(ByteString.copyFrom(signature))
                 .setPayload(payload)
                 .build())
-                .map(response -> {
-                    try {
-                        return (InitAuthResponsePayload) handleResponse(response);
-                    } catch (Exception e) {
-                        throw Exceptions.propagate(e);
-                    }
-                });
+                .map(response -> (InitAuthResponsePayload) handleResponse(response));
     }
 
     public Flux<AuthStatusResponsePayload> check(String sessionId) {
@@ -101,13 +94,7 @@ public class ReactorAuthClient extends ClientBase {
                 .setSignature(ByteString.copyFrom(signature))
                 .setPayload(payload)
                 .build())
-                .map(response -> {
-                    try {
-                        return (AuthStatusResponsePayload) handleResponse(response);
-                    } catch (Exception e) {
-                        throw Exceptions.propagate(e);
-                    }
-                })
+                .map(response -> (AuthStatusResponsePayload) handleResponse(response))
                 .takeUntil(result -> getResultCode(result) != ResultCodeExtProtocol.PENDING);
     }
 
@@ -131,13 +118,7 @@ public class ReactorAuthClient extends ClientBase {
                 .setSignature(ByteString.copyFrom(signature))
                 .setPayload(payload)
                 .build())
-                .map(response -> {
-                    try {
-                        return (AuthStatusResponsePayload) handleResponse(response);
-                    } catch (Exception e) {
-                        throw Exceptions.propagate(e);
-                    }
-                })
+                .map(response -> (AuthStatusResponsePayload) handleResponse(response))
                 .takeUntil(result -> getResultCode(result) != ResultCodeExtProtocol.PENDING);
     }
 
@@ -156,12 +137,6 @@ public class ReactorAuthClient extends ClientBase {
                 .setSignature(ByteString.copyFrom(signature))
                 .setPayload(payload)
                 .build())
-                .map(response -> {
-                    try {
-                        return (CancelAuthResponsePayload) handleResponse(response);
-                    } catch (Exception e) {
-                        throw Exceptions.propagate(e);
-                    }
-                });
+                .map(response -> (CancelAuthResponsePayload) handleResponse(response));
     }
 }

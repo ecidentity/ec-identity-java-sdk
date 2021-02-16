@@ -5,7 +5,6 @@ import io.ecidentity.integration.utils.Config;
 import io.ecidentity.protocol.authority.*;
 import io.ecidentity.protocol.types.KeyEntryTypeProtocol;
 import io.ecidentity.protocol.types.ResultCodeExtProtocol;
-import reactor.core.Exceptions;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -16,28 +15,28 @@ import static io.ecidentity.integration.utils.MessageUtils.getResultCode;
 
 public class ReactorSignClient extends ClientBase {
 
-    public static class Builder {
+    public static class Builder{
 
         private final Config config;
         private String accessKeyId;
         private KeyStore keyStore;
         private char[] password;
 
-        public Builder(Config config) {
+        public Builder(Config config){
             this.config = config;
         }
 
-        public Builder withAccessKey(String accessKey) {
+        public Builder withAccessKey(String accessKey){
             this.accessKeyId = accessKey;
             return this;
         }
 
-        public Builder withKeyStore(KeyStore keyStore) {
+        public Builder withKeyStore(KeyStore keyStore){
             this.keyStore = keyStore;
             return this;
         }
 
-        public Builder withPassword(char[] password) {
+        public Builder withPassword(char[] password){
             this.password = password;
             return this;
         }
@@ -73,13 +72,7 @@ public class ReactorSignClient extends ClientBase {
                 .setSignature(ByteString.copyFrom(signature))
                 .setPayload(payload)
                 .build())
-                .map(response -> {
-                    try {
-                        return (InitSignResponsePayload) handleResponse(response);
-                    } catch (Exception e) {
-                        throw Exceptions.propagate(e);
-                    }
-                })
+                .map(response -> (InitSignResponsePayload) handleResponse(response))
                 .takeUntil(result -> getResultCode(result) != ResultCodeExtProtocol.PENDING);
     }
 
@@ -99,13 +92,7 @@ public class ReactorSignClient extends ClientBase {
                 .setSignature(ByteString.copyFrom(signature))
                 .setPayload(payload)
                 .build())
-                .map(response -> {
-                    try {
-                        return (SignHashResponsePayload) handleResponse(response);
-                    } catch (Exception e) {
-                        throw Exceptions.propagate(e);
-                    }
-                })
+                .map(response -> (SignHashResponsePayload) handleResponse(response))
                 .takeUntil(result -> getResultCode(result) != ResultCodeExtProtocol.PENDING);
     }
 
@@ -124,13 +111,7 @@ public class ReactorSignClient extends ClientBase {
                 .setSignature(ByteString.copyFrom(signature))
                 .setPayload(payload)
                 .build())
-                .map(response -> {
-                    try {
-                        return (CancelSignResponsePayload) handleResponse(response);
-                    } catch (Exception e) {
-                        throw Exceptions.propagate(e);
-                    }
-                });
+                .map(response -> (CancelSignResponsePayload) handleResponse(response));
 
     }
 }
